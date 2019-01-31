@@ -1,0 +1,135 @@
+视图
+作用  视图接收web请求 并响应web请求
+本质 视图就是一个python中的函数
+
+响应
+网页
+重定向303 错误视图 404 500
+Json教程
+用户在浏览器输入网址
+然后django获取网址信息 去除ip与端口部分 得到url
+给到url管理器 逐个匹配urlconf   记录视图函数名
+视图管理器 找到对应的视图去执行 返回结果给浏览器
+
+url配置
+配置流程
+指定根级url主路由配置文件 setting中的ROOT_URLCONF
+urlpatterns   这是一个url实例的列表  里面存者的是url对象
+三个参数  正则表达式  视图函数名称   url名称
+
+url匹配正则的注意事项
+如果想要从url中获取一个参数 给到视图函数 要用括号括起参数那部分的正则
+匹配正则前不需要加反斜杠
+正则前需要加r来表示字符串不转义
+
+引入其他url配置
+在应用中创建urls文件 定义本应用的url配置 在主urls文件中使用include方法
+
+URL的反向解析
+概述 如果在视图 模板中使用了硬编码连接 在url配置发生改变时 动态生成连接的地址
+解决 在使用链接时 通过url配置的名称 动态生成url地址
+作用 使用url模块
+
+视图函数
+定义视图
+本质  一个函数
+视图参数 参数 1 一个HttpRequest的实例对象 浏览器发来的请求对象
+2 通过路由正则表达式获取的参数
+位置 在views下
+
+错误视图
+404视图  没找到页面 在模板目录下定义404.html
+request.path 表示错误的网址
+去配置setting
+DEBUG = False  #如果调式为True 永远不会调用404页面
+ALLOWED_HOSTS = ['*']
+500视图  在视图代码中出现错误 服务器代码错误
+
+HttpRequest对象
+服务器接收http请求后 会根据报文创建httpRequest对象
+django创建的 之后调用视图时传递给视图
+这个对象有属性
+path  请求的完整网址 不包括ip和端口
+method  表示请求的方式 常用的有GET POST
+encoding 浏览器提交的数据的编码方式  一般utf-8
+GET  类似字典的对象  包含了get请求时的所有参数
+POST 类似字典的对象  包含了POST请求时的所有参数
+FILES 类似字典的对象 包含了所有上传的文件
+COOKIES  字典 所有的cookie
+Session  类似字典  表示当前的会话
+
+方法
+is_ajax  如果是通过HttpRequest发起的  返回True
+ajax请求 服务器要返回json数据
+
+QueryDict对象
+GET
+get只能获取一个值
+getlist获取多个值
+POST
+使用表单 提交
+
+HttpResponse对象
+概述 作用 给浏览器返回数据
+HttpRequest对象是由django创建的 HttpResponse对象由程序员创建
+response是渲染后再返回给浏览器的
+用法
+不调用模板  直接返回数据
+调用模板 使用render方法
+原型 render(request,templateName,context)
+作用 结合页面数据和模板 返回完整的HTML页面
+参数  request  请求体对象
+templateName  模板HTML的路径
+context  传递给需要渲染再模板上的数据
+
+response对象中的属性
+contend 内容  表示返回的内容的类型
+charset 编码格式
+status_code 响应状态码 200 304 404 500
+content-type  指定输出的MIME类型
+
+response对象中的方法
+init 使用页面内容实例化HttpResponse对象
+write(content)   以文件的形式写入
+flust()   以文件的形式输出缓存区
+set_cookie(key,value,max_age=None,exprise=None)  设置cookies
+delete_cookie(key)  删除cookie
+如果删除一个不存在的key 就啥也没发生
+
+子类HttpResponseRedirect
+简写 redirect 来自django的快捷方式包
+推荐使用反向解析
+
+子类JsonResponse
+返回json数据 一般用于ajax异步请求
+__init__(self,data)
+data是一个字典对象
+注意 Content-type 为application/json
+
+状态保持
+http协议无状态性 每次请求是一次新请求
+客户端与服务器的一次通信就是一次会话
+实现状态保持 再客户端或者服务器存储有关会话的数据
+存储方式
+cookie   所有的数据存储再客户端 不要存敏感数据
+session  所有存储再服务器 在客户端用cookie存储session_id
+cookie存了键值对的键值  然后服务器拿着这个key去数据库找value
+在一段时间内跟踪请求者的状态 可以实现跨页面访问当前的请求者的数据
+注意 不同的请求者之间不会共享这个数据
+要用 要启用session  setting文件中
+使用session  每个HttpRequest对象都有一个session属性 是一个类似字典的对象
+get(key,default=None)  根据键值获取session值
+clear  清空所有的会话
+flush 删除当前的会话并删除会话的cookie
+
+设置session过期时间
+set_expiry 如果不设置  两个星期后过期
+参数是整数 单位是秒
+expire_date  过期时间
+如果设置0  关闭浏览器失效
+None  永不失效
+
+
+
+
+

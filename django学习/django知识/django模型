@@ -1,0 +1,177 @@
+ORM
+根据对象的类型生成表结构
+将对象 列表的操作转换为sql语句
+将sql语句查询到的结果转换为对象 列表
+
+优点
+极大的减轻了开发人员的工作量 不需要因为数据库的变更而修改代码
+模型 属性 表 字段间的关系
+一个模型类再数据库中对应一张表
+在模型类中定义的属性 对应该模型对照表中的一个字段
+django查询方式 不能用连续的下划线
+
+定义属性时 字段类型被定义再django.db.models.fields目录下
+使用方式
+导入 form django.db import models
+通过models.Field创建字段类型的对象 赋值给属性
+
+逻辑删除
+isDelete booleanField类型 默认值False 不要用物理删除
+
+字段类型
+
+AutoField
+主键类型 一个根据实际ID自动增加
+
+CharField(max_length) 最大长度
+字符串 默认表单样式textInput 这个说的是站点里的显示
+
+TextField
+大文本字符串 一般超过4000使用 站点里显示的就是textarea类型
+
+IntegerField
+整数
+
+DecimalField(max_digits=None decimal_places)
+浮点数 第一个是位数的总数 第二个是小数点后的位数
+
+FloatField
+浮点数
+
+BooleanField
+布尔值 只有true false
+
+Nullbooleanfield
+有none true false
+
+DateField(auto_now auto_now_add)
+使用python的datetime.date实例表示的日期
+
+第一个用于最后一次修改 第二个是自动就有时间了
+TimeField
+这个是时间
+DateTimeField
+这个是日期加时间
+FileField
+一个上传文件的字段
+ImageField
+继承了FileField的所有属性和方法
+
+字段的选项 对字段进行约束
+在字段对象时通过关键字参数指定
+null 默认false
+blank 可以为空 默认false
+db_column 字段的名称 如果未指定 就使用属性的名称作为字段名
+db_index true 会在表中为此字段创建索引
+default 默认值
+primary_key ture 主键
+unique true 唯一约束 这个字段在表中必须有唯一值
+
+
+数据表关系
+ForeignKey 一对多 外键写在多的那一端
+格式 对象.模型类小写_set.all()   比如grade是Grade()的对象 grade.students_set.all()
+ManyToManyField 多对多 外键写在两端
+grade.students
+OneToOneFiELD 一对一 任意一端
+元选项
+在模型类中定义Meta类 用于设置元信息
+db_table 定义数据表名 推荐使用小写字母 如果不写 数据表明默认为项目名小写_类名小写
+ordering 对象的默认排序字段 获取对象的列表时使用
+ordering['id']  根据id来排序 升序
+ordering['-id']  根据id来排序 降序
+排序会增加数据库的压力
+
+模型成员
+类属性
+有个隐藏的类属性 objects 这个是manager类型的一个对象
+当定义模型类时没有指定管理器 则django为模型创建一个名为objects的管理器
+作用是与数据库进行交互
+可以自定义管理器  当为模型指定模型管理器 django就不再为模型生成objects模型管理器
+模型管理器是django的模型进行与数据库进行查询的接口 一个模型类可以有多个模型管理器
+再自定义一个管理器Manager类
+作用 向管理器类中添加额外的方法
+修改管理器返回的原始集合  就是查询集   要重写get_query()方法
+
+创建对象
+目的 向数据库中添加数据
+当创建对象时 django不会对数据库进行读写操作 当调用save()方式时才与数据库交互
+将对象保存到数据表中
+注意 __init__已经在父类models.Model中使用 在自定义的模型中无法使用
+方法两种  1 在模型类中增加一个类方法  创建对象
+2 在自定义管理器中添加一个方法   创建对象
+
+重点哈 模型查询
+查询集 表示从数据库获取的对象集合
+查询集可以有多个过滤器
+过滤器就是一个函数 基于所给的参数限制查询集结果
+从sql角度来说 查询集和select语句等价 就像select * from 和加上where语句之后的select语句
+
+在管理器上调用过滤方法返回查询集
+惰性执行 创建查询集不会带来任何数据的访问 直到调用数据时 才会访问数据
+直接访问数据的情况 迭代 序列化 与if合用
+exclude() 过滤掉符合条件的数据
+order_by 排序
+values  一条数据就是一个对象(字典)  返回一个列表 这个直接是值 而all是得到对象的列表
+
+返回单个数据
+get 返回一个满足条件的对象 如果没有找到对象 会有模型类.DoesNotExist异常
+count 返回当前查询集中的对象个数
+first 返回查询集中第一个对象
+last 返回查询集中最后一个对象
+exists  判断查询集是否有数据
+
+限制查询集
+查询集返回列表 可以使用下标的方法进行限制 等同于sql中的limit语句
+注意下标不能是负数
+查询集的缓存
+每个查询集都包含一个缓存 来最小化的对数据库访问
+
+字段查询
+实现了sql中的where语句 作为方法filter exclude get的参数
+语法 模型类里的属性名称__比较运算符=值  比如Students.obj.filter(name__contains="小")
+比如 Students.obj.filter(name__startwith="小")
+外键 属性名_id
+转义 类似sql中的like语句  like语句中使用%是为了匹配占位 匹配数据中的%where like
+
+比较运算符
+exact 确切的  用来判断 大小写敏感
+contains  是否包含  大小写敏感
+startwith,endwith  以value开头或结尾 大小写敏感
+以上4个运算符在前面加上i 就表示不区分大小写了
+
+isnull isnotnull 是否为空
+in 是否包含在范围内  Students.obj.filter(pk__in=[2,4,6,8])
+gt gte lt lte 大于 小于
+day week_day hour minute second  这是关于日期的
+
+跨关联查询
+处理join查询   关联两个模型
+语法  模型类名__属性名__比较运算符
+查询快捷 pk   这个代表主键 比如一般主键是id
+Grade.obj.filter(students__name__contains='小')  过滤出学生名字带有小的是哪个班级的
+
+聚合函数
+使用aggregate函数返回聚合函数的值
+Avg 平均值 Count 和 Max 最大 Min 最小 Sum 求和
+要 from django.db.models import Max,Min
+比如 Students.obj.aggregate(Max('age'))
+
+F对象
+from django.db.models import F,Q
+可以使用模型的A属性与B属性进行比较
+Grade.obj.filter(girl_num__gt=F('boy_num'))  找出女生数量大于男生数量的班级
+支持F对象的算数运算
+Grade.obj.filter(girl_num__gt=F('boy_num')+20)
+
+Q对象
+过滤器的方法中的关键字参数 条件为And模式
+需求 进行 在Filter中进行or查询
+解决 使用Q对象
+Students.obj.filter(Q(pk__lte=3) | Q(age__gte=18))
+Students.obj.filter(~ Q(pk__lte=3)  这个叫取反
+
+
+
+
+

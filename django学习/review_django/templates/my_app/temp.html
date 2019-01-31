@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+</head>
+<body>
+<h1>welcome to new world admin ashen7</h1>
+<ul>
+{% for stu in student %}
+    <li>
+        {{forloop.counter}}---{{stu.name}}---{{stu.getAttr}}---{{num}}
+    </li>
+    {% empty %}
+    <h2>目前没有学生信息</h2>
+{% endfor %}
+</ul>
+</body>
+</html>

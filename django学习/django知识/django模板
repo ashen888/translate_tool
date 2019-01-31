@@ -1,0 +1,86 @@
+模板
+定义模板 变量
+视图传递给模板的数据
+
+要遵守标识符规则
+语法 {{var}}
+注意 如果使用的变量不存在 则插入的是空字符串
+
+在模板中使用.语法
+字典查询
+属性或者方法
+
+数字索引
+在模板中调用对象的方法  注意 不能传递参数
+
+标签
+语法 {% tag %}
+作用 在输出中创建文本
+控制循环
+if
+{%if 表达式1%} {%elif 表达式2%} {%elsef 表达式2%} {%endif%}
+
+for
+{%for xxx in xx%}  {%empty%} 注意列表为空或者列表不存在时执行语句2 {%endfor%}
+{{forloop.counter}} 表示当前是第几次循环
+
+comment
+{%comment%}  注释的内容 {%endcomment%}
+
+ifequal  ifnotequal
+{%ifequal 值1 值2%}
+
+include
+作用 加载模板并以标签内的参数渲染
+格式 {%include '模板目录' 参数1 参数2%}
+
+url
+作用 反向解析
+格式  {%url'namespace:name' 参数1 参数2%}
+模板里写的app把主路由里namespace真正的url拿过来 good把子路由里good真正的url拿过来
+给到路由匹配 要匹配一个数字 所以后面还要加一个数字给他
+
+csrf token
+作用  用于跨站请求伪造保护
+{%csrf_token%}
+某些恶意网站包含链接 表单 按钮 利用登陆用户在浏览器中认证 从而攻击服务
+防止csrf
+settings中间件 写一句代码
+或者 在模板写一个标签 {%csrf_token%}
+这个要隐藏 那这个cookie的键值 就可以进入
+
+block,extends
+作用 用于模板的继承
+模板继承可以减少页面的内容的重复定义 实现页面的重用
+block标签 在父模板中预留区域 子模版去填充
+entends 打算  继承模板 需要写在模板文件的第一行
+
+autoescape
+用于HTML转义
+问题 接收到的变量当成字符串渲染 或者当成HMTL代码渲染
+{%autoescape off%} {endautoescape} 这个是变成HTML  这个是字符串{%autoescape on%}
+
+过滤器
+语法  {{var|过滤器}}
+作用 在变量被显示前修改他  比如{{name|upper}}  把变量name变成大写输出
+并没有修改本身 只是重新生成一个
+过滤器可以传递参数 参数用引号引起来 join  格式  列表join.'#'
+比如{{name|join:'#'}}  name是一个列表 然后用#来给他连起
+如果一个变量没有被提供 或者值为false 空 可以使用默认值 defalut {{var|default:'good'}}
+关于日期  根据给定格式转换日期为字符串 date 格式 {{date_var|date:'y-m-d'}}
+
+HTML转义  escape 逃避 {{var|escape}} 这个是转义成字符串
+{{var|safe}} 这个是转义成HTML代码
+这个只能一次性转一个 标签的可以转多个
+
+加减乘除 比如 加{{num|add:10}} 减{{num|add:-10}}
+这个是标签了 不是 过滤器   乘{{%widthratio num 1 5%}} 其实是num/1*5这样的
+那么除就是{{%widthratio num 5 1%}}
+
+注释
+{#注释内容#}
+
+验证码
+作用  在用户注册 登陆页面的时候使用 为了防止暴力请求 减轻服务器压力
+防止csrf一种方式
+

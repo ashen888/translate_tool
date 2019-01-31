@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <ul>
+        {% for stu in students%}
+        <li>
+            {{stu.name}} ===> {{stu.age}} ===> {{stu.introduce}} ===> {{stu.grade}}
+        </li>
+        {%endfor%}
+    </ul>
+        {%for index in students.paginator.page_range%}
+            {%if index == students.number%}
+                {{index}}
+            {%else%}
+                <a href="/my_app/students_page/{{index}}">{{index}}</a>
+            {%endif%}
+        {%endfor%}
+</body>
+</html>

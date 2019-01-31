@@ -1,0 +1,38 @@
+{%load static from staticfiles%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="/static/my_app/css/style.css">
+    <script type="text/javascript" src="/static/my_app/js/my.js"></script>
+    {%comment%}
+    <style type="text/css">
+     p{
+    color:pink;
+    font-size:40;
+    }
+    </style>
+    {%endcomment%}
+</head>
+<body>
+<div>
+<form method="post" action="/my_app/check/">
+    {%csrf_token%}
+    姓名:<input type="text" name="username"><br/>
+    密码:<input type="password" name="pwd"><br/><br/>
+    请输入验证码:<br/><input type="text" name="verify"><br/>
+    <img src="/my_app/verifycode/">
+    <input type="submit" name="登陆">
+    <p>{{flag|safe}}</p>
+</form>
+    <form method="post" action="/my_app/savefile/" enctype="multipart/form-data">
+        {%csrf_token%}
+        <input type="file" name="file">
+        <input type="submit" value="上传">
+        <img src="/static/my_app/img/1.jpg">
+        <!--<img src="{% static 'my_app/img/1.png %'}">-->
+    </form>
+</div>
+</body>
+</html>

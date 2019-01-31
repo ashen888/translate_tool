@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>学生信息</title>
+    <!--<link rel="stylesheet" type="text/css" href="/static/my_app/css/style.css">-->
+    <script type="text/javascript" src="/static/my_app/js/my.js"></script>
+</head>
+<body>
+<div>
+<h1>学生信息列表</h1>
+<ol>
+    {%for student in students%}
+    <li>
+        {{student.name}}==>>{{student.introduce}}==>>{{student.grade}}
+    </li>
+    {% endfor %}
+</ol>
+</div>
+</body>
+</html>

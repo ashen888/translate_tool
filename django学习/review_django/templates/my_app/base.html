@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {%comment%}
+    <style type="text/css">
+        .header,.main{
+        color:black
+        }
+    </style>
+    {%endcomment%}
+</head>
+<body>
+    <div id="header">header</div>
+    <div id="main">
+        {%block main%}
+
+        {%endblock main%}
+        <br>
+        {%block main2%}
+
+        {%endblock main2%}
+
+    </div>
+    <div id="footer">header</div>
+</body>
+</html>
